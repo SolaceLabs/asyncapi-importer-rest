@@ -1,0 +1,19 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "epToken": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9+/=]+$",
+        "description": "A Base64-encoded token."
+      },
+      "asyncApiSpec": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9+/=]+$",
+        "description": "A Base64-encoded AsyncAPI specification (could be JSON or YAML format)."
+      }
+    },
+    "required": ["epToken", "asyncApiSpec"],
+    "additionalProperties": false
+}
+  

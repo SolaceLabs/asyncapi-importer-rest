@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "description": "A message describing the service"
+      },
+      "currentTime": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The current time in ISO 8601 format"
+      }
+    },
+    "required": ["message", "currentTime"],
+    "additionalProperties": false
+  }
+  

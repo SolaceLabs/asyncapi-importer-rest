@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: asyncapi-importer-rest
+
+server:
+  port: 9004
+
+logging:
+  level:
+    root: INFO
