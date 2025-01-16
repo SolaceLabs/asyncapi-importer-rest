@@ -21,6 +21,8 @@ This project provides the ability to import AsyncApi specs into Solace Event Por
 - **com.solace.ep.asyncapi:asyncapi-importer-core** dependency.
 
 ## Steps to build the project
+Alternatively, you can find the latest release in the GitHub repository and download the jar file.
+
 This project has a dependency on **asyncapi-importer-core** artifact, which can be built from a module contained in the [Solace AsyncAPI Importer for Event Portal](https://github.com/SolaceLabs/sol-ep-asyncapi-importer "Open project on GitHub") project.
 
 1. If you do not have the **asyncapi-importer-core** module installed in your Maven repo, then clone the project at: [Solace AsyncAPI Importer for Event Portal](https://github.com/SolaceLabs/sol-ep-asyncapi-importer "Open project on GitHub") and follow the instructions to build it. (Run at the project root: `mvn clean install -DskipTests=true`)
