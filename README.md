@@ -51,6 +51,14 @@ Application Domain is specified as a URL parameter, Event Portal Token and the A
 The request body schema is located here: [import-request.json](src/main/resources/schemas/import-request.json)
 It is a simple JSON document with 2 fields: `epToken` and `asyncApiSpec`. **Both fields are required and must be Base64 encoded.** The encoded AsyncApi spec can be in either JSON or YAML formats.
 
+#### Sample Request Body
+```json
+{
+    "epToken": "ZXlKaGJHY2lPaUp [redacted] UQ==",
+    "asyncApiSpec": "ewoJImFzeW [redacted] Cg=="
+}
+```
+
 ### Import Request URL Parameters
 
 1. **Application Domain (REQUIRED)** - Specifies the Application Domain targeted for the import operation. One of the following URL parameters must be specified. If both are values are specified, then **appDomainId** will be used:
