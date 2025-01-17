@@ -4,6 +4,9 @@ spring:
 
 server:
   port: 9004
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 50
 
 logging:
   level:

@@ -16,9 +16,13 @@ This project provides the ability to import AsyncApi specs into Solace Event Por
 # Building the Service
 
 ## Prerequisites
+You will need the following tools installed locally
 - **Java JDK 17+**
 - **Maven 3.8+**
-- **com.solace.ep.asyncapi:asyncapi-importer-core** dependency.
+- **Git**
+
+Ths project has the following external dependency. This artifact must be installed to your Maven repo to build the projec successfully.
+- **com.solace.ep.asyncapi:asyncapi-importer-core**
 
 ## Steps to build the project
 Alternatively, you can find the latest release in the GitHub repository and download the jar file.
@@ -31,13 +35,44 @@ This project has a dependency on **asyncapi-importer-core** artifact, which can 
     - This will produce compiled executable Jar at `target/asyncapi-importer-rest-[Current SemVer].jar
 
 # Executing the Service
-You can execute the service by simply running the jar or executing using the Maven spring-boot plugin.
 
-For example (from project root folder):
-- `java -jar target/asyncapi-importer-rest-0.1.0.jar`
-- `mvn spring-boot:run`
+## Executing the Java jar file directly
+You can execute the service by simply running the jar.
+
+For example (from project root folder):<br>
+`java -jar target/asyncapi-importer-rest.jar`
+
+Using Spring Boot plugin<br>
+`mvn spring-boot:run`
 
 When running, the configured listener port is `9004`.
+
+## Docker / Podman
+A **Dockerfile** is provided to build an image from `openjdk:17-jdk-slim` base image. To build and run the image:
+- docker build -t asyncapi-importer-rest:latest .
+- docker run -p 9004:9004 asyncapi-importer-rest:latest
+
+Substitute port and tags if necessary.
+
+## SAP BTP CloudFoundry
+For convenience's sake, it is also possible to directly deploy the release artifact into SAP BTP CloudFoundry space if your organization has one enabled by following the below instructions.
+
+1. Make sure that you have the CloudFoundry CLI installed.
+2. Download the release artifact over here: Github-Releases
+3. Download the manifest file included as a part of the source code over here: Manifest file
+4. Make sure that the above two files are stored in the same directory/folder
+5. Update the route in the below section as suitable for your organization space and settings:
+    ```yaml
+    routes:
+        - route: TARGET-ROUTE
+    ```
+6. Login to your organization's SAP BTP Cloudfoundry space.
+7. Navigate to the location where the artifact release and manifest file are stored in a terminal/shell and run the following command:
+    ```bash
+    cf push -f manifest.yml
+    ```
+8. Monitor the deployment and startup of the application
+9. Navigate with the application and click on the route defined in the application to access the tool.
 
 ## Alive Check
 A simple HTTP GET request can be performed to verify that the service is active. Context is `/importer/alive`. e.g. http://localhost:9004/importer/alive on local machine.
@@ -143,3 +178,18 @@ Response schema can be found here [import-response.json](src/main/resources/sche
   "additionalProperties": false
 }
 ```
+
+## Resources
+This is not an officially supported Solace product.
+
+For more information, try these resources:
+
+- Ask the [Solace Community](https://solace.community)
+- The Solace Developer Portal website at: https://solace.dev
+
+## Authors
+
+See the list of [contributors](https://github.com/SolaceLabs/asyncapi-importer-rest/graphs/contributors) who participated in this project.
+
+# License
+See the [LICENSE](LICENSE) file for details.

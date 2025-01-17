@@ -46,8 +46,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AsyncApiImportController {
 
     // In-memory logging
-    LoggerContext context = LogUtils.getContext();
-    PatternLayoutEncoder encoder = LogUtils.getMemoryEncoder(context, "%-5level - %msg");
+    private static LoggerContext context = LogUtils.getContext();
+    private static PatternLayoutEncoder encoder = LogUtils.getMemoryEncoder(context, "%-5level - %msg");
 
     /**
      * For testing Server deployment checks
@@ -110,6 +110,7 @@ public class AsyncApiImportController {
             rootLogger.detachAppender(memoryAppender);
             memoryAppender.stop();
             memoryAppender.clear();
+            memoryAppender = null;
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
@@ -171,6 +172,7 @@ public class AsyncApiImportController {
             rootLogger.detachAppender(memoryAppender);
             memoryAppender.stop();
             memoryAppender.clear();
+            memoryAppender = null;
         }
         return new ResponseEntity<>(response, (httpStatus == null ? HttpStatus.INTERNAL_SERVER_ERROR : httpStatus));
     }

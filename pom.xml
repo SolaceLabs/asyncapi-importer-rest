@@ -68,6 +68,10 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<!-- Set the final name of the JAR without version -->
+					<finalName>asyncapi-importer-rest</finalName>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
