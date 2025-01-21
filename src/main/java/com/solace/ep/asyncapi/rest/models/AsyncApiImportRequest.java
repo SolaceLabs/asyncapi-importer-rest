@@ -19,6 +19,9 @@ package com.solace.ep.asyncapi.rest.models;
 
 import lombok.Data;
 
+/**
+ * HTTP/POST request body for import operation
+ */
 @Data
 public class AsyncApiImportRequest {
 

@@ -106,9 +106,9 @@ public class AsyncApiImportController {
         if (!validRequest) {
             log.error("ASYNCAPI SPEC IMPORT -- FAILED VALIDATION");
             AsyncApiImportResponse response = new AsyncApiImportResponse();
-            response.getMsgs().addAll(memoryAppender.getMemoryLogList());
             rootLogger.detachAppender(memoryAppender);
             memoryAppender.stop();
+            response.getMsgs().addAll(memoryAppender.getMemoryLogList());
             memoryAppender.clear();
             memoryAppender = null;
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -137,18 +137,16 @@ public class AsyncApiImportController {
 
             if (useAppDomainId)
             {
-                // TODO - Implement select on application Id
-                // log.info("Resolving Application domain by appDomainId is Not Implemented");
-
                 AsyncApiImporter.execImportOperation(
                     appDomainId, 
                     null, 
                     epToken, 
                     asyncApiSpec, 
                     resolvedUrl, 
-                    newVersionStrategy
+                    newVersionStrategy,
+                    disableCascadeUpdate,
+                    eventsOnly
                 );
-                log.info("ASYNCAPI SPEC IMPORT -- COMPLETE");
             } else {
                 AsyncApiImporter.execImportOperation(
                     null,
@@ -160,17 +158,17 @@ public class AsyncApiImportController {
                     disableCascadeUpdate,
                     eventsOnly
                 );
-                log.info("ASYNCAPI SPEC IMPORT -- COMPLETE");
             }
+            log.info("ASYNCAPI SPEC IMPORT -- COMPLETE");
             httpStatus = HttpStatus.OK;
         } catch (Exception exc) {
             log.error("ASYNCAPI SPEC IMPORT FAILED WITH AN ERROR");
             log.error(exc.getLocalizedMessage());
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         } finally {
-            response.getMsgs().addAll(memoryAppender.getMemoryLogList());
             rootLogger.detachAppender(memoryAppender);
             memoryAppender.stop();
+            response.getMsgs().addAll(memoryAppender.getMemoryLogList());
             memoryAppender.clear();
             memoryAppender = null;
         }

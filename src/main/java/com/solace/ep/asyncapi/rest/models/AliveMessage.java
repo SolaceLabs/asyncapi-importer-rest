@@ -22,6 +22,9 @@ import java.time.format.DateTimeFormatter;
 
 import lombok.Data;
 
+/**
+ * Simpe return type for 'Alive' requests to indicate that the service is available
+ */
 @Data
 public class AliveMessage {
 

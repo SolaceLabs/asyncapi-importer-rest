@@ -24,20 +24,34 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
 
+/**
+ * Custom MemoryAppender class extended from Logback base
+ * The purpose is to instantiate a MemoryAppender object for each invokation of
+ * the importer POST method to capture activity and report back to the calling app.
+ */
 public class MemoryAppender extends AppenderBase<ILoggingEvent> {
 
     private List<String> memoryLogList = new ArrayList<>();
 
-    PatternLayoutEncoder encoder;
+    private PatternLayoutEncoder encoder;
 
-    String threadNameFilter;
+    private String threadNameFilter;
 
+    /**
+     * Constructor
+     * @param encoder - Encoder instantiated for the application instance
+     * @param threadNameFilter - The name of the thread for which logs should be captured
+     */
     public MemoryAppender( PatternLayoutEncoder encoder, String threadNameFilter )
     {
         this.encoder = encoder;
         this.threadNameFilter = threadNameFilter;
     }
 
+    /**
+     * Append method called by logger. Filters log entries by matching the producing thread against
+     * the threadNameFilter passed in the constructor.
+     */
     @Override
     protected void append(ILoggingEvent eventObject) {
         if (threadNameFilter == null || !threadNameFilter.contentEquals(eventObject.getThreadName())) {
@@ -53,10 +67,17 @@ public class MemoryAppender extends AppenderBase<ILoggingEvent> {
         }
     }
 
+    /**
+     * Get the logs captured in memory for this appender
+     * @return
+     */
     public List<String> getMemoryLogList() {
         return memoryLogList;
     }
 
+    /**
+     * Clear the logs captured in memory for this appender
+     */
     public void clear() {
         memoryLogList.clear();
     }

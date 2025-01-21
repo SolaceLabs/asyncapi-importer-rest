@@ -22,6 +22,9 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * Class defing repsonse to HTTP/POST - contains an array of log messages for the operation
+ */
 @Data
 public class AsyncApiImportResponse {
 

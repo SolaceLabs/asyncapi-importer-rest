@@ -26,13 +26,29 @@ import com.solace.ep.asyncapi.rest.log.MemoryAppender;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 
+/**
+ * Class containing static functions to support logging. Specifically, log
+ * messages captured to report back in the HTTP ResponseEntity for the current
+ * operation.
+ */
 public class LogUtils {
 
+    /**
+     * Get LoggerContext
+     * @return
+     */
     public static LoggerContext getContext()
     {
         return (LoggerContext) LoggerFactory.getILoggerFactory();
     }
 
+    /**
+     * Get PatternLayoutEncoder (Log Layout) to use. Intended for use with
+     * custom log MemoryAppender.
+     * @param context
+     * @param patternString
+     * @return
+     */
     public static PatternLayoutEncoder getMemoryEncoder(
         LoggerContext context,
         String patternString
@@ -46,6 +62,13 @@ public class LogUtils {
         return encoder;
     }
 
+    /**
+     * Instantiate the memory appender for the current thread
+     * @param context
+     * @param encoder
+     * @param threadNameFilter
+     * @return
+     */
     public static MemoryAppender getMemoryAppender(
         LoggerContext context,
         PatternLayoutEncoder encoder,

@@ -24,9 +24,13 @@ import com.solace.ep.asyncapi.rest.models.AsyncApiImportRequest;
 
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Static functions used to validate input for HTTP/POST import operation
+ */
 @Slf4j
 public class ValidationUtils {
 
+    // Pattern for character set valid for Base64 encoded strings
     private static final Pattern BASE64_PATTERN = Pattern.compile("^[A-Za-z0-9+/=]*$");
     
     /**
@@ -64,6 +68,11 @@ public class ValidationUtils {
         }
     }
 
+    /**
+     * Test if EP Token and AsyncApi in request body are present and contain valid Base64 encoded strings
+     * @param request
+     * @return
+     */
     public static boolean validRequestBody(
         final AsyncApiImportRequest request
     )
@@ -82,6 +91,12 @@ public class ValidationUtils {
         return isValid;
     }
 
+    /**
+     * Test if appDomainId or appDomainName are present
+     * @param appDomainId
+     * @param appDomainName
+     * @return
+     */
     public static boolean validDomainIdentifiers(
         final String appDomainId,
         final String appDomainName
@@ -95,6 +110,12 @@ public class ValidationUtils {
         return isValid;
     }
 
+    /**
+     * Rest if urlRegion is a valid value.
+     * @param urlRegion
+     * @param urlOverride
+     * @return
+     */
     public static boolean validRegion(
         final String urlRegion,
         final String urlOverride
@@ -119,6 +140,11 @@ public class ValidationUtils {
         return isValid;
     }
 
+    /**
+     * Test if newVersionStrateg is a valid value
+     * @param newVersionStrategy
+     * @return
+     */
     public static boolean validNewVersionStrategy(
         final String newVersionStrategy
     )
@@ -138,6 +164,12 @@ public class ValidationUtils {
         return isValid;
     }
 
+    /**
+     * Return Solace Cloud API to use based upon the region identifier
+     * @param urlRegion
+     * @param urlOverride
+     * @return
+     */
     public static String getUrlByRegion(
         final String urlRegion,
         final String urlOverride
