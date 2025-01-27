@@ -74,10 +74,58 @@ For convenience's sake, it is also possible to directly deploy the release artif
 8. Monitor the deployment and startup of the application
 9. Navigate with the application and click on the route defined in the application to access the tool.
 
-## Alive Check
+# REST Service Operations
+There are four operations supported by this service:
+1. **Alive Check** - Check if the service is active and accessible
+2. **Event Portal Token Validation** - Validate your EP bearer token for your regional endpoint
+3. **Query Application Domains** - Retrieve a list of application domains in your account
+4. **AsyncApi Import Request** - Import an AsyncApi spec into Event Portal
+
+## 1. Alive Check
 A simple HTTP GET request can be performed to verify that the service is active. Context is `/importer/alive`. e.g. http://localhost:9004/importer/alive on local machine.
 
-## AsyncApi Import Request
+## 2. Event Portal Token Validation
+The purpose of this operation is to verify that the token being used is valid. Token validation is specific to the [Solace Cloud API endpoint](https://api.solace.dev/cloud/reference/using-the-v2-rest-apis-for-pubsub-cloud) region called. See the referenced link for more details. This is a convenience method; it is not required to verify a token before attempting to call the import method. The context for this operation is `/importer/validate-token` and the HTTP verb is `POST`.
+
+### EP Token Request Body ###
+The request body is a simple JSON message with a single field: `epToken`. `epToken` **must be Base64 encoded** in the message body. 
+
+#### Sample JSON Request body for EP Token verification
+```json
+{
+    "epToken": "ZXlKaGJHY2lPaUp [redacted] UQ=="
+}
+```
+
+### EP Token Validation URL parameters
+There are two parameters on the URL: **Solace Cloud API Region and URL Override**. These parameters are used to specify the Solace Cloud API endpoint. They are NOT required; if not specified, then the API endpoint defaults to the **US region**. If both are specified, then `urlOverride` will be used. The US, EU, AU, and SG values for `urlRegion` correlate to regional cloud API endpoints found at: [Using PubSub+ Cloud REST APIs](https://api.solace.dev/cloud/reference/using-the-v2-rest-apis-for-pubsub-cloud) 
+    - `urlRegion`=[ US, EU, AU, SG ]
+    - `urlOverride`=https://your.override.url
+
+## 3. Query Application Domains
+Returns a list of application domains, including application domain ID and the name. Either the name or the domain ID may be used to execute an import operation. (An Event Portal Application Domain must be specified as the target for an AsyncApi import operation)
+
+### Application Domain Query Request Parameters
+The parameters used for this operation are identical to those used for the EP Token Validation (see above).
+
+### Application Domain Query - Sample Response Body
+```json
+{
+    "msgs": [],
+    "applicationDomains": [
+        {
+            "id": "xyzahd90abc",
+            "name": "ACME Bank"
+        },
+        {
+            "id": "abc1234abc3",
+            "name": "Fulfillment"
+        }
+    ]
+}
+```
+
+## 4. AsyncApi Import Request
 Requests to import AsyncApi specs are executing using HTTP/POST. The context is `/importer`. e.g. `http://localhost:9004/importer` on localhost. Three things are always required to execute an import operation:
 - **Application Domain** to target for import
 - **AsyncAPI spec** to import
