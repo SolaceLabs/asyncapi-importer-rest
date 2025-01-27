@@ -17,6 +17,7 @@
 
 package com.solace.ep.asyncapi.rest.utils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,15 @@ public class ValidationUtils {
 
     // Pattern for character set valid for Base64 encoded strings
     private static final Pattern BASE64_PATTERN = Pattern.compile("^[A-Za-z0-9+/=]*$");
+
+    public static final String
+                URL_US = "https://api.solace.cloud",
+                URL_AU = "https://api.solacecloud.com.au",
+                URL_EU = "https://api.solacecloud.eu",
+                URL_SG = "https://api.solacecloud.sg";
+
+    public static final String
+                TOKEN_PERMISSIONS_PATH = "/api/v0/token/permissions";
     
     /**
      * Test if a string looks like it is base64 encoded
@@ -66,6 +76,11 @@ public class ValidationUtils {
             // If decoding fails (invalid Base64 data), return false
             return false;
         }
+    }
+
+    public static String decodeBase64(String base64ToDecode ) throws Exception
+    {
+        return new String(Base64.getDecoder().decode(base64ToDecode), StandardCharsets.UTF_8);
     }
 
     /**
@@ -175,12 +190,6 @@ public class ValidationUtils {
         final String urlOverride
     )
     {
-        final String
-                URL_US = "https://api.solace.cloud",
-                URL_AU = "https://api.solacecloud.com.au",
-                URL_EU = "https://api.solacecloud.eu",
-                URL_SG = "https://api.solacecloud.sg";
-
         String resolvedUrl;
 
         if (urlOverride != null && ! urlOverride.isBlank()) {
@@ -204,5 +213,13 @@ public class ValidationUtils {
             }
         }
         return resolvedUrl;
+    }
+
+    public static String getEpTokenValidationUrlByRegion(
+        final String urlRegion,
+        final String urlOverride
+    )
+    {
+        return getUrlByRegion(urlRegion, urlOverride) + "/" + TOKEN_PERMISSIONS_PATH;
     }
 }

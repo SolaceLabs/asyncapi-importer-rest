@@ -31,7 +31,7 @@ This project has a dependency on **asyncapi-importer-core** artifact, which can 
 
 1. If you do not have the **asyncapi-importer-core** module installed in your Maven repo, then clone the project at: [Solace AsyncAPI Importer for Event Portal](https://github.com/SolaceLabs/sol-ep-asyncapi-importer "Open project on GitHub") and follow the instructions to build it. (Run at the project root: `mvn clean install -DskipTests=true`)
     - This operation will build the CORE import capability and a CLI wrapper. The completed artifacts will be installed to your Maven repo. The CORE module (asyncapi-importer-core) is used by the REST service.
-2. Build the REST Service project. At the this project root, execute: `mvn clean install`
+2. Build the REST Service project. At the this project root, execute: `mvn clean package`
     - This will produce compiled executable Jar at `target/asyncapi-importer-rest-[Current SemVer].jar
 
 # Executing the Service

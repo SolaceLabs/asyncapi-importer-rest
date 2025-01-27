@@ -6,7 +6,7 @@
 applications:
   - name: asyncapi-importer-rest
     routes:
-      - route: SUBSTITUE.YOUR.ROUTE.HERE
+      - route: SUBSTITUTE.YOUR.ROUTE.HERE
     path: asyncapi-importer-rest.jar
     memory: 1G
     disk_quota: 512M

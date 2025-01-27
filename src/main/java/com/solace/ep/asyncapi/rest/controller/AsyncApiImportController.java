@@ -17,9 +17,6 @@
 
 package com.solace.ep.asyncapi.rest.controller;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,10 +26,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solace.ep.asyncapi.importer.AsyncApiImporter;
+import com.solace.ep.asyncapi.rest.apis.SolaceCloudApiCalls;
 import com.solace.ep.asyncapi.rest.log.MemoryAppender;
 import com.solace.ep.asyncapi.rest.models.AliveMessage;
+import com.solace.ep.asyncapi.rest.models.AsyncApiImportAppDomainResponse;
 import com.solace.ep.asyncapi.rest.models.AsyncApiImportRequest;
 import com.solace.ep.asyncapi.rest.models.AsyncApiImportResponse;
+import com.solace.ep.asyncapi.rest.models.AsyncApiImportTokenRequest;
 import com.solace.ep.asyncapi.rest.utils.LogUtils;
 import com.solace.ep.asyncapi.rest.utils.ValidationUtils;
 
@@ -58,6 +58,93 @@ public class AsyncApiImportController {
     {
         log.debug("/importer/alive endpoint invoked");
         return new ResponseEntity<>(new AliveMessage(), HttpStatus.OK);
+    }
+
+    /**
+     * Defines web method to validate EP bearer token. Bearer token is passed in
+     * the request body as Base64 encoded string.
+     * @param request
+     * @param urlRegion
+     * @param urlOverride
+     * @return
+     */
+    @PostMapping("/importer/validate-token")
+    public ResponseEntity<AsyncApiImportResponse> validateToken(
+        @RequestBody AsyncApiImportTokenRequest request,
+        @RequestParam(name = "urlRegion", defaultValue = "US") String urlRegion,
+        @RequestParam(name = "urlOverride", required = false) String urlOverride
+    )
+    {
+        log.debug("/importer/validate-token invoked");
+
+        String responseMessage = null;
+        boolean validRequest = true;
+        String epToken = null, resolvedCloudApiUrl = null;
+        try {
+            validRequest = ValidationUtils.isBase64(request.getEpToken()) && validRequest;
+            validRequest = ValidationUtils.validRegion(urlRegion, urlOverride) && validRequest;
+            if (!validRequest) {
+                responseMessage = "Token not valid or Solace Cloud API not specified correctly";
+            } else {
+                epToken = ValidationUtils.decodeBase64(request.getEpToken());
+                resolvedCloudApiUrl = ValidationUtils.getUrlByRegion(urlRegion, urlOverride);
+            }
+        } catch (Exception exc) {
+            responseMessage = exc.getLocalizedMessage();
+            validRequest = false;
+        }
+
+        if (!validRequest) {
+            AsyncApiImportResponse response = new AsyncApiImportResponse();
+            response.getMsgs().add(responseMessage == null ? "Unidentified Error" : responseMessage);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return SolaceCloudApiCalls.validateEpToken(epToken, resolvedCloudApiUrl);
+    }
+
+    /**
+     * Web method used to return list of application domains
+     * @param request
+     * @param urlRegion
+     * @param urlOverride
+     * @return
+     */
+    @PostMapping("/importer/appdomains")
+    public ResponseEntity<AsyncApiImportAppDomainResponse> getDomains(
+        @RequestBody AsyncApiImportTokenRequest request,
+        @RequestParam(name = "urlRegion", defaultValue = "US") String urlRegion,
+        @RequestParam(name = "urlOverride", required = false) String urlOverride
+    )
+    {
+        log.debug("/importer/appdomains invoked");
+
+        String resolvedUrl = "";
+        String decodedEpToken = "";
+        String responseMessage = null;
+
+        boolean validRequest = true;
+        try {
+            validRequest = ValidationUtils.isBase64(request.getEpToken()) && validRequest;
+            validRequest = ValidationUtils.validRegion(urlRegion, urlOverride) && validRequest;
+
+            resolvedUrl = ValidationUtils.getUrlByRegion(urlRegion, urlOverride);
+            decodedEpToken = ValidationUtils.decodeBase64(request.getEpToken());
+        } catch (Exception exc) {
+            validRequest = false;
+            responseMessage = exc.getLocalizedMessage();
+            log.warn("AsyncApiImportController.getDomains: {}", responseMessage);
+        }
+
+        if (!validRequest) {
+            AsyncApiImportAppDomainResponse response = new AsyncApiImportAppDomainResponse();
+            response.getApplicationDomains();
+            response.getMsgs().add("Not a Base64 encoded token or could not resolve the correct Solace Cloud API URL");
+            if (responseMessage != null) {
+                response.getMsgs().add(responseMessage);
+            }
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return SolaceCloudApiCalls.getAppDomainsFromSolaceCloudApi(decodedEpToken, resolvedUrl);
     }
 
     /**
@@ -129,8 +216,8 @@ public class AsyncApiImportController {
 
         try {
             final boolean useAppDomainId = ( appDomainId != null && !appDomainId.isBlank() );
-            final String epToken = new String(Base64.getDecoder().decode(request.getEpToken()), StandardCharsets.UTF_8);
-            final String asyncApiSpec = new String(Base64.getDecoder().decode(request.getAsyncApiSpec()), StandardCharsets.UTF_8);
+            final String epToken = ValidationUtils.decodeBase64(request.getEpToken());
+            final String asyncApiSpec = ValidationUtils.decodeBase64(request.getAsyncApiSpec());
             final String resolvedUrl = ValidationUtils.getUrlByRegion(urlRegion, urlOverride);
 
             log.info("Target Solace Cloud API URL: {}", resolvedUrl);
