@@ -132,12 +132,13 @@ public class ValidationUtils {
      * @return
      */
     public static boolean validRegion(
-        final String urlRegion,
+        String urlRegion,
         final String urlOverride
     )
     {
         boolean isValid = true;
         if (urlRegion != null) {
+            urlRegion = urlRegion.toUpperCase();
             switch (urlRegion) {
                 case "US":
                     break;
@@ -186,7 +187,7 @@ public class ValidationUtils {
      * @return
      */
     public static String getUrlByRegion(
-        final String urlRegion,
+        String urlRegion,
         final String urlOverride
     )
     {
@@ -195,18 +196,19 @@ public class ValidationUtils {
         if (urlOverride != null && ! urlOverride.isBlank()) {
             resolvedUrl = urlOverride;
         } else {
+            urlRegion = urlRegion.toUpperCase();
             switch (urlRegion) {
                 case "US":
                     resolvedUrl = URL_US;
                     break;
                 case "EU":
-                resolvedUrl = URL_EU;
+                    resolvedUrl = URL_EU;
                     break;
                 case "AU":
-                resolvedUrl = URL_AU;
+                    resolvedUrl = URL_AU;
                     break;
                 case "SG":
-                resolvedUrl = URL_SG;
+                    resolvedUrl = URL_SG;
                     break;
                 default:
                     resolvedUrl = URL_US;

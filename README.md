@@ -1,7 +1,8 @@
 # Solace REST AsyncAPI Importer for Event Portal
-This project provides the ability to import AsyncApi specs into Solace Event Portal utilizing a RESTful web service. 
+This project provides the ability to import [AsyncApi](https://www.asyncapi.com/) specs into [Solace Event Portal](https://solace.com/products/portal/) utilizing a RESTful web service. 
 
 ## What is imported
+The AsyncApi importer identifies objects in your AsyncApi spec files and imports them to corresponding objects in Solace Event Portal.
 - AsyncApi Schemas &rarr; Event Portal Schema Objects
 - Parameters with value lists &rarr; Event Portal Enums
 - Channel + Message Definitions - with Schemas and Enums &rarr; Event Portal Events
@@ -85,7 +86,7 @@ There are four operations supported by this service:
 A simple HTTP GET request can be performed to verify that the service is active. Context is `/importer/alive`. e.g. http://localhost:9004/importer/alive on local machine.
 
 ## 2. Event Portal Token Validation
-The purpose of this operation is to verify that the token being used is valid. Token validation is specific to the [Solace Cloud API endpoint](https://api.solace.dev/cloud/reference/using-the-v2-rest-apis-for-pubsub-cloud) region called. See the referenced link for more details. This is a convenience method; it is not required to verify a token before attempting to call the import method. The context for this operation is `/importer/validate-token` and the HTTP verb is `POST`.
+The purpose of this operation is to verify that the token being used is valid. This is a convenience method; it is not required to verify a token before attempting to call the import method. The context for this operation is `/importer/validate-token` and the HTTP verb is `POST`.
 
 ### EP Token Request Body ###
 The request body is a simple JSON message with a single field: `epToken`. `epToken` **must be Base64 encoded** in the message body. 

@@ -74,12 +74,22 @@ public class SolaceCloudApiCalls {
                 httpStatus = HttpStatus.valueOf(apiResponse.getStatusCode().value());
             }
         } catch (Exception exc) {
-            responseMessage = exc.getLocalizedMessage();
+            responseMessage = redactBearerTokenFromMessage(exc.getLocalizedMessage());
             log.error("AsyncApiImportController.validateToken: {}", responseMessage);
             httpStatus = HttpStatus.UNAUTHORIZED;
         }
         response.getMsgs().add(responseMessage == null ? "Unknown Status" : responseMessage);
         return new ResponseEntity<AsyncApiImportResponse>(response, httpStatus);
+    }
+
+    private static String redactBearerTokenFromMessage(final String msg)
+    {
+        final int bearerTokenPositionInMsg = msg.indexOf(" Bearer ");
+        if (bearerTokenPositionInMsg > 0) {
+            // Redact Token in error message
+            return msg.substring(0, bearerTokenPositionInMsg);
+        }
+        return msg;
     }
 
     /**
@@ -114,14 +124,14 @@ public class SolaceCloudApiCalls {
             }
         } catch (ApiException apiException) {
             log.error("SolaceCloudApiCalls.getAppDomainsFromSolaceCloudApi failed; Code: {}; Message: '{}'", 
-                        apiException.getCode(), apiException.getMessage());
+                        apiException.getCode(), redactBearerTokenFromMessage(apiException.getMessage()));
             AsyncApiImportAppDomainResponse apiExcResponse = new AsyncApiImportAppDomainResponse();
             response.getMsgs().add(apiException.getMessage());
             return new ResponseEntity<>(apiExcResponse, HttpStatusCode.valueOf(apiException.getCode()));
         } catch (Exception exc) {
-            log.error("SolaceCloudApiCalls.getAppDomainsFromSolaceCloudApi failed; Error: {}", exc.getMessage());
+            log.error("SolaceCloudApiCalls.getAppDomainsFromSolaceCloudApi failed; Error: {}", redactBearerTokenFromMessage(exc.getMessage()));
             AsyncApiImportAppDomainResponse excResponse = new AsyncApiImportAppDomainResponse();
-            excResponse.getMsgs().add(exc.getMessage());
+            excResponse.getMsgs().add(redactBearerTokenFromMessage(exc.getMessage()));
             return new ResponseEntity<>(excResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
