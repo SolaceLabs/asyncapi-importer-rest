@@ -11,4 +11,6 @@ COPY target/asyncapi-importer-rest.jar app.jar
 EXPOSE 9004
 
 # Run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "/app/app.jar", "-Xms256m", "-Xmx1g", "-XX:MetaspaceSize=128m", "-XX:MaxMetaspaceSize=256m"]
+# Java JVM memory settings are based upon best estimates from run-time observations
+# Adjust values based upon your requirements
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "-Xms256m", "-Xmx512m", "-XX:MetaspaceSize=128m", "-XX:MaxMetaspaceSize=256m"]

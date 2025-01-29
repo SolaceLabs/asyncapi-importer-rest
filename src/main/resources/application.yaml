@@ -11,3 +11,6 @@ server:
 logging:
   level:
     root: INFO
+
+cors:
+  allowed-origin: "https://studio.solace.dev"
