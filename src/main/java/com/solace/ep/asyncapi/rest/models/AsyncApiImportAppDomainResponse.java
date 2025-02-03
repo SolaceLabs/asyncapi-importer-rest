@@ -31,7 +31,7 @@ public class AsyncApiImportAppDomainResponse {
 
     private List<String> msgs;
 
-    private List<AppDomainItem> applicationDomains;
+    private List<AppDomainItem> applicationDomains;     // List of application domain objects
 
     public List<AppDomainItem> getApplicationDomains() {
         if (this.applicationDomains == null) {
@@ -50,9 +50,9 @@ public class AsyncApiImportAppDomainResponse {
     @Data
     public static class AppDomainItem {
 
-        private String id;
+        private String id;      // Event Portal Application Domain ID
 
-        private String name;
+        private String name;    // Event Portal Application Domain Name
 
         public AppDomainItem(String id, String name) {
             this.id = id;
