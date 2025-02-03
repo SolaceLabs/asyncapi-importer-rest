@@ -13,4 +13,5 @@ logging:
     root: INFO
 
 cors:
-  allowed-origin: "https://studio.solace.dev"
+  # Comma-separated list of origins from which this REST service will be called
+  allowed-origins: "https://studio.solace.dev,http://localhost:9005"
