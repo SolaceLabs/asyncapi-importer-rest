@@ -46,14 +46,16 @@ public class SolaceCloudApiCalls {
     /**
      * Validate Event Portal Token
      * @param epToken - Token to validate as String
-     * @param cloudApiTokenValidationUrl - Solace Cloud API endpoint to call
+     * @param cloudApiBaseUrl - Solace Cloud API base URL
      * @return - ResponseEntity object to return as result of POST method
      */
     public static ResponseEntity<AsyncApiImportResponse> validateEpToken(
         final String epToken,
-        final String cloudApiTokenValidationUrl
+        final String cloudApiBaseUrl
     )
     {
+        final String CLOUD_TOKEN_VALIDATION_CONTEXT = "/api/v0/token/permissions";
+        final String cloudApiTokenValidationUrl = cloudApiBaseUrl + CLOUD_TOKEN_VALIDATION_CONTEXT;
         AsyncApiImportResponse response = new AsyncApiImportResponse();
         HttpStatus httpStatus = null;
         String responseMessage = null;

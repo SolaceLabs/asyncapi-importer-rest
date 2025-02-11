@@ -14,4 +14,4 @@ logging:
 
 cors:
   # Comma-separated list of origins from which this REST service will be called
-  allowed-origins: "https://studio.solace.dev,http://localhost:9005"
+  allowed-origins: "https://studio.solace.dev,http://localhost:9005,https://feeds.solace.dev"
