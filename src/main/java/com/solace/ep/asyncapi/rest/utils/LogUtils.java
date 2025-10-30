@@ -72,10 +72,11 @@ public class LogUtils {
     public static MemoryAppender getMemoryAppender(
         LoggerContext context,
         PatternLayoutEncoder encoder,
-        String threadNameFilter
+        String threadNameFilter,
+        String threadPrefixFilter
     )
     {
-        MemoryAppender memoryAppender = new MemoryAppender(encoder, threadNameFilter);
+        MemoryAppender memoryAppender = new MemoryAppender(encoder, threadNameFilter, threadPrefixFilter);
         memoryAppender.setContext(context);
         memoryAppender.start();
         return memoryAppender;

@@ -10,9 +10,6 @@ The AsyncApi importer identifies objects in your AsyncApi spec files and imports
 
 ### Details and Limitations
 - AsyncApi specs must be in 2.X format. AsyncApi 3.X support is planned by unimplemented.
-- Only Channels with **subscribe** operations (evaluated to events) will be imported
-- Only Schemas, and Parameters (evaluated to enums) referenced by channels with **subscribe** operations will be imported.
-- Given that (AsyncApi 2.X) messages, schema names, and parameter names are key fields in the specifications, changes to these fields between specs and import operations will result in new objects.
 
 # Building the Service
 
@@ -147,17 +144,33 @@ It is a simple JSON document with 2 fields: `epToken` and `asyncApiSpec`. **Both
 
 ### Import Request URL Parameters
 
+| Parameter | Required | Expected Values | Default | Description |
+|-----------|----------|----------------|---------|-------------|
+| `appDomainId` | *Required\** | Domain ID string | None | Specifies the Application Domain ID for the import operation |
+| `appDomainName` | *Required\** | Domain name string | None | Specifies the Application Domain name for the import operation |
+| `urlRegion` | Optional | US, EU, AU, SG | US | Solace Cloud API region endpoint |
+| `urlOverride` | Optional | Valid URL string | None | Override URL for Solace Cloud API (takes precedence over urlRegion) |
+| `newVersionStrategy` | Optional | MAJOR, MINOR, PATCH | MAJOR | Defines how semantic versions of new objects are incremented |
+| `importApplication` | Optional | true, false | true | Controls whether to import applications (false = Enums, Schemas, and Events only) |
+| `importEventApi` | Optional | true, false | false | Controls whether to create an Event API for the imported AsyncAPI spec |
+| `cascadeUpdate` | Optional | true, false | true | Controls creation of new versions based on dependency changes |
+
+\* **Application Domain Requirement**: Either `appDomainId` OR `appDomainName` must be specified. If both are provided, `appDomainId` takes precedence.
+
+#### Parameter Details
+
 1. **Application Domain (REQUIRED)** - Specifies the Application Domain targeted for the import operation. One of the following URL parameters must be specified. If both are values are specified, then **appDomainId** will be used:
     - `appDomainId`=Domain ID
     - `appDomainName`=Domain Name
 2. **Region/URL** - These parameters are used to specify the Solace Cloud API endpoint. They are NOT required; if not specified, then the API endpoint defaults to the **US region**. If both are specified, then urlOverride will be used. The US, EU, AU, and SG values for urlRegion correlate to regional cloud API endpoints found at: [Using PubSub+ Cloud REST APIs](https://api.solace.dev/cloud/reference/using-the-v2-rest-apis-for-pubsub-cloud) 
-    - `urlRegion`=[ US, EU, AU, SG ]
+    - `urlRegion`=[ US, EU, AU, SG ] (default: US)
     - `urlOverride`=https://your.override.url
 3. **New Version Strategy** - Defines how semantic versions of new objects are to be incremented. Not required, defaults to MAJOR. The first version for a new object will always be `1.0.0`
-    - `newVersionStrategy`= [ MAJOR | MINOR | PATCH ]
-4. **Import Options** - Neither value is required, both default to **false**. If `eventsOnly`=true is specified, then the import operation will not attempt to match, create, or update an application. Only Enums, Schemas, and Events will be imported. If `disableCascadeUpdate`=true is specified, then the creation of new Event Versions and new Application Versions based upon changes to dependencies will be disabled.
-    - `eventsOnly`=true
-    - `disableCascadeUpdate`=true
+    - `newVersionStrategy`= [ MAJOR | MINOR | PATCH ] (default: MAJOR)
+4. **Import Options** - Control what gets imported and how the import behaves:
+    - `importApplication`=[ true | false ] (default: true) - When set to false, the import operation will not attempt to match, create, or update an application. Only Enums, Schemas, and Events will be imported.
+    - `importEventApi`=[ true | false ] (default: false) - When set to true, an Event API will be created for the imported AsyncAPI spec.
+    - `cascadeUpdate`=[ true | false ] (default: true) - When set to false, the creation of new Event Versions and new Application Versions based upon changes to dependencies will be disabled.
 
 ## Response Message
 
