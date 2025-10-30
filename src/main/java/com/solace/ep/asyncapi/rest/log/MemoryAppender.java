@@ -37,15 +37,18 @@ public class MemoryAppender extends AppenderBase<ILoggingEvent> {
 
     private String threadNameFilter;
 
+    private String threadPrefixFilter;
+
     /**
      * Constructor
      * @param encoder - Encoder instantiated for the application instance
      * @param threadNameFilter - The name of the thread for which logs should be captured
      */
-    public MemoryAppender( PatternLayoutEncoder encoder, String threadNameFilter )
+    public MemoryAppender( PatternLayoutEncoder encoder, String threadNameFilter, String threadPrefixFilter )
     {
         this.encoder = encoder;
         this.threadNameFilter = threadNameFilter;
+        this.threadPrefixFilter = threadPrefixFilter;
     }
 
     /**
@@ -54,7 +57,10 @@ public class MemoryAppender extends AppenderBase<ILoggingEvent> {
      */
     @Override
     protected void append(ILoggingEvent eventObject) {
-        if (threadNameFilter == null || !threadNameFilter.contentEquals(eventObject.getThreadName())) {
+        if (threadNameFilter == null) {
+            return;
+        } else  if (!eventObject.getThreadName().equals(threadNameFilter) &&
+                   (threadPrefixFilter == null || !eventObject.getThreadName().startsWith(threadPrefixFilter))) {
             return;
         }
         try {

@@ -17,6 +17,8 @@
 
 package com.solace.ep.asyncapi.rest.controller;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.solace.ep.asyncapi.importer.AsyncApiImporter;
+import com.solace.ep.asyncapi.importer.EpImportOperator;
 import com.solace.ep.asyncapi.rest.apis.SolaceCloudApiCalls;
 import com.solace.ep.asyncapi.rest.log.MemoryAppender;
 import com.solace.ep.asyncapi.rest.models.AliveMessage;
@@ -48,6 +51,7 @@ public class AsyncApiImportController {
     // In-memory logging
     private static LoggerContext context = LogUtils.getContext();
     private static PatternLayoutEncoder encoder = LogUtils.getMemoryEncoder(context, "%-5level - %msg");
+    private static AtomicInteger importRequestCounter = new AtomicInteger(0);
 
     /**
      * For testing Server deployment checks
@@ -167,12 +171,16 @@ public class AsyncApiImportController {
         @RequestParam(name = "urlRegion", defaultValue = "US") String urlRegion,
         @RequestParam(name = "urlOverride", required = false) String urlOverride,
         @RequestParam(name = "newVersionStrategy", defaultValue = "MAJOR") String newVersionStrategy,
-        @RequestParam(name = "eventsOnly", defaultValue = "false") boolean eventsOnly,
-        @RequestParam(name = "disableCascadeUpdate", defaultValue = "false") boolean disableCascadeUpdate
+        @RequestParam(name = "importApplication", defaultValue = "true") boolean importApplication,
+        @RequestParam(name = "importEventApi", defaultValue = "false") boolean importEventApi,
+        @RequestParam(name = "cascadeUpdate", defaultValue = "true") boolean cascadeUpdate
     )
     {
+        final int thisRequestId = importRequestCounter.incrementAndGet();
+        log.info("AsyncApi Import Request ID {}: /importer invoked", thisRequestId);
+
         // Set up memory logging for this request
-        MemoryAppender memoryAppender = LogUtils.getMemoryAppender(context, encoder, Thread.currentThread().getName());
+        MemoryAppender memoryAppender = LogUtils.getMemoryAppender(context, encoder, Thread.currentThread().getName(), EpImportOperator.getOperatorIdPrefix(thisRequestId));
         Logger rootLogger = context.getLogger("ROOT");
         rootLogger.addAppender(memoryAppender);
 
@@ -202,11 +210,14 @@ public class AsyncApiImportController {
         }
 
         log.debug("AsyncApi import request passed validation");
-        if (disableCascadeUpdate) {
+        if (! cascadeUpdate) {
             log.info("Cascade Update feature is disabled for this operation");
         }
-        if (eventsOnly) {
+        if (! importApplication) {
             log.info("Application Import is disabled; Operation will import Enums, Schemas, and Events");
+        }
+        if (importEventApi) {
+            log.info("Event API import is enabled; An Event API will be created for the imported AsyncAPI spec");
         }
         log.info("SemVer of new object versions will increment {} version of the previous object", newVersionStrategy);
         log.debug("Thread ID: {} -- Name: {} -- Group: {}", Thread.currentThread().getId(), Thread.currentThread().getName(), Thread.currentThread().getThreadGroup().getName() );
@@ -231,8 +242,9 @@ public class AsyncApiImportController {
                     asyncApiSpec, 
                     resolvedUrl, 
                     newVersionStrategy,
-                    disableCascadeUpdate,
-                    eventsOnly
+                    cascadeUpdate,
+                    importApplication,
+                    importEventApi
                 );
             } else {
                 AsyncApiImporter.execImportOperation(
@@ -241,9 +253,10 @@ public class AsyncApiImportController {
                     epToken, 
                     asyncApiSpec, 
                     resolvedUrl,
-                    newVersionStrategy, 
-                    disableCascadeUpdate,
-                    eventsOnly
+                    newVersionStrategy,
+                    cascadeUpdate,
+                    importApplication,
+                    importEventApi
                 );
             }
             log.info("ASYNCAPI SPEC IMPORT -- COMPLETE");
