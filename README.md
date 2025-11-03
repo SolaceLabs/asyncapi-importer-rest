@@ -19,11 +19,11 @@ You will need the following tools installed locally
 - **Maven 3.8+**
 - **Git**
 
-Ths project has the following external dependency. This artifact must be installed to your Maven repo to build the projec successfully.
+Ths project has the following external dependency. This artifact must be installed to your Maven repo to build the project successfully.
 - **com.solace.ep.asyncapi:asyncapi-importer-core**
 
 ## Steps to build the project
-Alternatively, you can find the latest release in the GitHub repository and download the jar file.
+Alternatively, you can find the [latest release](https://github.com/SolaceLabs/asyncapi-importer-rest/tags) in the GitHub repository and download the jar file.
 
 This project has a dependency on **asyncapi-importer-core** artifact, which can be built from a module contained in the [Solace AsyncAPI Importer for Event Portal](https://github.com/SolaceLabs/sol-ep-asyncapi-importer "Open project on GitHub") project.
 
@@ -86,7 +86,7 @@ A simple HTTP GET request can be performed to verify that the service is active.
 The purpose of this operation is to verify that the token being used is valid. This is a convenience method; it is not required to verify a token before attempting to call the import method. The context for this operation is `/importer/validate-token` and the HTTP verb is `POST`.
 
 ### EP Token Request Body ###
-The request body is a simple JSON message with a single field: `epToken`. `epToken` **must be Base64 encoded** in the message body. 
+The request body is a simple JSON message with a single field: `epToken`. Check the [Docs](https://docs.solace.com/Cloud/ght_api_tokens.htm#creating-an-api-token) to see how to generate a token. `epToken` **must be Base64 encoded** in the message body. 
 
 #### Sample JSON Request body for EP Token verification
 ```json
@@ -101,7 +101,7 @@ There are two parameters on the URL: **Solace Cloud API Region and URL Override*
     - `urlOverride`=https://your.override.url
 
 ## 3. Query Application Domains
-Returns a list of application domains, including application domain ID and the name. Either the name or the domain ID may be used to execute an import operation. (An Event Portal Application Domain must be specified as the target for an AsyncApi import operation)
+Returns a list of application domains, including application domain ID and the name. Either the name or the domain ID may be used to execute an import operation. (An Event Portal Application Domain must be specified as the target for an AsyncApi import operation). The context for this operation is `/importer/appdomains` and the HTTP verb is `POST`.
 
 ### Application Domain Query Request Parameters
 The parameters used for this operation are identical to those used for the EP Token Validation (see above).
